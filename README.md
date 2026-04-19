@@ -44,11 +44,11 @@ Raw SWaT window (420 timesteps × 44 channels)
     Anomaly score at inference: s(x) = MSE(z̃_tgt, z_tgt)
 ```
 
-**LeanEncoder** — 4-layer Transformer with Pre-LN, 4 attention heads, d_model=256, strict causal masking within each segment. No EMA teacher. The same encoder weights process both context and target independently, enforced by causal attention.
+**LeanEncoder**: 4-layer Transformer with Pre-LN, 4 attention heads, d_model=256, strict causal masking within each segment. No EMA teacher. The same encoder weights process both context and target independently, enforced by causal attention.
 
-**TemporalPredictor** — Three-layer 1D-CNN (kernel=3, channels 256→128→44) with a linear output projection. A convolutional predictor is appropriate here because the 5-minute prediction horizon is localised in time; full attention would be wasteful. The ablation shows +0.024 VUS-PR over a linear mapping under identical conditions.
+**TemporalPredictor**: Three-layer 1D-CNN (kernel=3, channels 256→128→44) with a linear output projection. A convolutional predictor is appropriate here because the 5-minute prediction horizon is localised in time; full attention would be wasteful. The ablation shows +0.024 VUS-PR over a linear mapping under identical conditions.
 
-**SIGReg** — Enforces an isotropic Gaussian on the batch of encoder embeddings by testing random projections via the Epps-Pulley characteristic function test (Balestriero & LeCun, 2025). The Cramér-Wold theorem guarantees that if all 1D projections are standard normal, the full multivariate distribution is isotropic Gaussian. Complexity is O(B²K) — linear in projection count, no architectural changes required. SIGReg decays from 21.82 → 2.47 monotonically over 30 epochs, confirming progressive convergence to the provably optimal embedding geometry without EMA, stop-gradients, or momentum scheduling.
+**SIGReg**: Enforces an isotropic Gaussian on the batch of encoder embeddings by testing random projections via the Epps-Pulley characteristic function test (Balestriero & LeCun, 2025). The Cramér-Wold theorem guarantees that if all 1D projections are standard normal, the full multivariate distribution is isotropic Gaussian. Complexity is O(B²K) — linear in projection count, no architectural changes required. SIGReg decays from 21.82 → 2.47 monotonically over 30 epochs, confirming progressive convergence to the provably optimal embedding geometry without EMA, stop-gradients, or momentum scheduling.
 
 ---
 
@@ -66,7 +66,7 @@ Raw SWaT window (420 timesteps × 44 channels)
 | E6 | 30/5 min | 1D-CNN | 0.05 | 4 | 0.0624 | 0.1681 | 0.8761 |
 | **E7** | **30/5 min** | **1D-CNN** | **0.05** | **4** | **0.0254** | **0.0622** | **0.9601** |
 
-The single largest gain (+0.186 VUS-PR) comes from extending context from 10 to 30 minutes — long enough to observe SWaT's inter-stage dynamics. Predictor architecture contributes +0.024. Both effects are independent and additive.
+The single largest gain (+0.186 VUS-PR) comes from extending context from 10 to 30 minutes; long enough to observe SWaT's inter-stage dynamics. Predictor architecture contributes +0.024. Both effects are independent and additive.
 
 ### Computational profile
 
@@ -84,7 +84,7 @@ The single largest gain (+0.186 VUS-PR) comes from extending context from 10 to 
 
 ## Dataset
 
-**SWaT (Secure Water Treatment)** — iTrust Centre, Singapore University of Technology and Design.
+**SWaT (Secure Water Treatment)**: iTrust Centre, Singapore University of Technology and Design.
 
 - 51 sensor and actuator channels (44 active after static column removal), 1-second sampling
 - ~496,800 timesteps of attack-free training data
@@ -99,7 +99,7 @@ Access requires signing a data usage agreement with iTrust: [https://itrust.sutd
 
 1. Drop 7 static/redundant columns: MV101, AIT201, MV201, P201, P202, P204, MV303
 2. Downsample 5× (1s → 25s resolution)
-3. Apply per-channel RevIN normalization per window — no global statistics, robust to setpoint shifts
+3. Apply per-channel RevIN normalization per window; no global statistics, robust to setpoint shifts
 4. Because inference is purely latent, the RevIN denormalization step is bypassed
 
 ---
@@ -108,9 +108,9 @@ Access requires signing a data usage agreement with iTrust: [https://itrust.sutd
 
 TS-LeJEPA builds directly on two papers:
 
-**LeCun (2022)** — *A Path Towards Autonomous Machine Intelligence.* Argues that world models should predict in representation space, not pixel/sensor space. Unpredictable noise cannot be predicted and so contributes no gradient signal; the encoder learns to discard it.
+**LeCun (2022)**: *A Path Towards Autonomous Machine Intelligence.* Argues that world models should predict in representation space, not pixel/sensor space. Unpredictable noise cannot be predicted and so contributes no gradient signal; the encoder learns to discard it.
 
-**Balestriero & LeCun (2025)** — *LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics.* Proves via OLS and kernel regression that the isotropic Gaussian is the unique embedding distribution minimising both bias and variance in downstream prediction tasks. Introduces SIGReg to enforce this distribution via the Cramér-Wold theorem and Epps-Pulley characteristic function testing. Validates across 60+ architectures on ImageNet-1k with 3× fewer training epochs than I-JEPA.
+**Balestriero & LeCun (2025)**: *LeJEPA: Provable and Scalable Self-Supervised Learning Without the Heuristics.* Proves via OLS and kernel regression that the isotropic Gaussian is the unique embedding distribution minimising both bias and variance in downstream prediction tasks. Introduces SIGReg to enforce this distribution via the Cramér-Wold theorem and Epps-Pulley characteristic function testing. Validates across 60+ architectures on ImageNet-1k with 3× fewer training epochs than I-JEPA.
 
 TS-LeJEPA applies this framework to ICS anomaly detection. To our knowledge, this is the first LeJEPA application to industrial cyber-physical systems.
 
@@ -127,5 +127,5 @@ TS-LeJEPA applies this framework to ICS anomaly detection. To our knowledge, thi
 
 ## Contact
 
-Chidera Elijah Achinike — MTech AI, Vivekananda Global University  
+Chidera Elijah Achinike | MTech AI, Vivekananda Global University  
 [LinkedIn](https://linkedin.com/in/aichidera) · [Blog](https://dera-unhinged.hashnode.dev)
